@@ -1,0 +1,45 @@
+#!/bin/bash
+echo ThemeSaver by tejasprak
+echo copyright 2016.
+if [ ! -f /var/mobile/.themesaver ]; then
+	echo "First run, creating files..."
+	echo -n > /var/mobile/.themesaver
+	mkdir /var/mobile/Library/Preferences/themesaver	
+else
+	echo "Detected configuration at /var/mobile/.themesaver"
+fi
+showusage="Y"
+arg1=$1
+arg2=$2
+if [ "$arg1" = "-s" ]
+then
+	showusage="N"
+	mkdir /var/mobile/Library/Preferences/themesaver/$2
+	for file in /var/mobile/Library/Preferences/*plist; do
+		if [[ $file != *"com.apple."* ]];then
+			echo processing $file
+			cp $file /var/mobile/Library/Preferences/themesaver/$2
+		fi
+	done
+	
+		
+fi
+if [ "$arg1" = "-r" ]
+then
+	showusage="N"
+	for file in /var/mobile/Library/Preferences/themesaver/$arg2/*.plist; do
+		echo processing $file
+		cp $file /var/mobile/Library/Preferences/
+	done
+	echo "Would you like to respring?(Y/N)"
+	read resp
+	if [ "$resp" = "Y" ]
+	then
+		killall -9 SpringBoard
+	fi
+fi
+if [ "$showusage" = "Y" ]
+then
+	echo themesaver save: themesaver -s [save name]
+	echo themesaver restore: themesaver -r [restore name]
+fi
